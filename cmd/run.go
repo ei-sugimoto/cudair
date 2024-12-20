@@ -23,11 +23,13 @@ func Run(configFilePath string) error {
 
 	config, err := config.NewCudairConfig(configFilePath)
 	if err != nil {
+		log.Fatalln("cause Error while parsing toml:", err)
 		return err
 	}
 
 	err = watcher.Add(config.Root)
 	if err != nil {
+		log.Fatalln("cause Error while creating watcher:", err)
 		return err
 	}
 
@@ -41,7 +43,7 @@ func Run(configFilePath string) error {
 				}
 				if ((e.Op&fsnotify.Write == fsnotify.Write) || (e.Op&fsnotify.Remove == fsnotify.Remove) || (e.Op&fsnotify.Create == fsnotify.Create) || (e.Op&fsnotify.Rename == fsnotify.Rename)) && (filepath.Ext(e.Name) == ".cu" || filepath.Ext(e.Name) == ".cuh") {
 					log.Printf("Changing %#v\n", e)
-					if err := builder.Build(config.Build.Cmd); err != nil {
+					if err := builder.Build(config.Build.Cmd, config.TmpDir); err != nil {
 						log.Fatalln("build error:", err)
 						return
 					}
@@ -52,7 +54,9 @@ func Run(configFilePath string) error {
 
 				}
 			case err := <-watcher.Errors:
-				log.Fatalln("cause error:", err)
+				if err != nil {
+					log.Fatalln("cause error while running:", err)
+				}
 			}
 		}
 	}()
