@@ -42,6 +42,24 @@ func main() {
 				return nil
 			},
 		},
+		{
+			Name:  "run",
+			Usage: "if use set -c or --config. default '.cudair.toml'",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "config, c",
+					Value: ".cudair.toml",
+					Usage: "",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				if err := cmd.Run(c.String("config")); err != nil {
+					return err
+				}
+
+				return nil
+			},
+		},
 	}
 
 	app.Run(os.Args)
