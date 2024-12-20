@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -11,18 +12,12 @@ func Execute(bin string) error {
 	parts := strings.Fields(bin)
 	runCmd := exec.Command(parts[0], parts[1:]...)
 
-	log.Println("execting...")
-	file, err := os.Create("./tmp/result.log")
-	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
-	}
-	defer file.Close()
-
-	runCmd.Stdout = file
-	runCmd.Stderr = file
-
+	runCmd.Stdout = os.Stdout
+	runCmd.Stderr = os.Stderr
 	if err := runCmd.Run(); err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
+		return fmt.Errorf("command execution failed: %w", err)
 	}
+
+	log.Println("Command finished successfully")
 	return nil
 }
