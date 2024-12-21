@@ -9,9 +9,10 @@ type CudairConfig struct {
 }
 
 type CudairBuildConfig struct {
-	Bin string `toml:"bin"`
-	Cmd string `toml:"cmd"`
-	Log string `toml:"log"`
+	Bin        string   `toml:"bin"`
+	Cmd        string   `toml:"cmd"`
+	Log        string   `toml:"log"`
+	ExcludeDir []string `toml:"exclude_dir"`
 }
 
 func NewCudairConfig(path string) (*CudairConfig, error) {

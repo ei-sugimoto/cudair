@@ -15,6 +15,7 @@ tmp_dir = "/some/tmp"
 bin = "/some/bin"
 cmd = "some command"
 log = "/some/log"
+exclude_dir = ["dir1", "dir2"]
 `
 	file, err := os.CreateTemp("", "config-*.toml")
 	if err != nil {
@@ -46,6 +47,15 @@ log = "/some/log"
 	}
 	if config.Build.Log != "/some/log" {
 		t.Errorf("Expected build.log to be '/some/log', got %v", config.Build.Log)
+	}
+	if len(config.Build.ExcludeDir) != 2 {
+		t.Fatalf("Expected 2 exclude_dir, got %v", len(config.Build.ExcludeDir))
+	}
+	if config.Build.ExcludeDir[0] != "dir1" {
+		t.Errorf("Expected build.exclude_dir[0] to be 'dir1', got %v", config.Build.ExcludeDir[0])
+	}
+	if config.Build.ExcludeDir[1] != "dir2" {
+		t.Errorf("Expected build.exclude_dir[1] to be 'dir2', got %v", config.Build.ExcludeDir[1])
 	}
 }
 
