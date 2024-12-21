@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/BurntSushi/toml v1.4.0
+	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/urfave/cli v1.22.16
 )

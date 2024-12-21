@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/common-nighthawk/go-figure"
 	"github.com/ei-sugimoto/cudair/internal/builder"
 	"github.com/ei-sugimoto/cudair/internal/config"
 	"github.com/ei-sugimoto/cudair/internal/executor"
@@ -17,6 +18,8 @@ import (
 )
 
 func Run(configFilePath string) error {
+	art := figure.NewColorFigure("Cudair", "", "green", true)
+	art.Print()
 	log.Println("starting...")
 
 	config, err := config.NewCudairConfig(configFilePath)

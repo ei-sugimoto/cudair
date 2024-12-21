@@ -44,7 +44,7 @@ func (cw *CudairWatch) AddWatcherRecursively() error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Added watcher: %s\n", path)
+			fmt.Printf("Added watching dir: %s\n", path)
 		}
 		return nil
 	})

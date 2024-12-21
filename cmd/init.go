@@ -12,6 +12,7 @@ func Initialize() error {
 	bin = "./tmp/main"
 	cmd = "nvcc --std=c++17 -o ./tmp/main main.cu"
 	log = "build-errors.log"
+	exclude_dir = ["tmp"]
 	`
 
 	file, err := os.Create(".cudair.toml")

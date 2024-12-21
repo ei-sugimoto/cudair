@@ -7,7 +7,7 @@ __global__ void helloWorldKernel() {
 
 int main() {
     // GPU上でカーネルを実行
-    helloWorldKernel<<<10, 10>>>();
+    helloWorldKernel<<<1, 1>>>();
 
     // CUDAのデバイス同期を待機
     cudaDeviceSynchronize();
