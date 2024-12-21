@@ -25,7 +25,7 @@ func Run(configFilePath string) error {
 		return err
 	}
 
-	watcher, err := watch.NewCudairWatch(config.Root, []string{"tmp"})
+	watcher, err := watch.NewCudairWatch(config.Root, config.Build.ExcludeDir)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func Run(configFilePath string) error {
 			if !ok {
 				log.Fatal("watcher event is not ok")
 			}
-			if ((e.Op&fsnotify.Write == fsnotify.Write) || (e.Op&fsnotify.Remove == fsnotify.Remove) || (e.Op&fsnotify.Create == fsnotify.Create) || (e.Op&fsnotify.Rename == fsnotify.Rename)) && (filepath.Ext(e.Name) == ".cu" || filepath.Ext(e.Name) == ".cuh") {
+			if ((e.Op&fsnotify.Write == fsnotify.Write) || (e.Op&fsnotify.Remove == fsnotify.Remove) || (e.Op&fsnotify.Create == fsnotify.Create) || (e.Op&fsnotify.Rename == fsnotify.Rename)) && (filepath.Ext(e.Name) == ".cu" || filepath.Ext(e.Name) == ".cuh" || isDir(e.Name)) {
 				mu.Lock()
 				//　imp event debounce.
 				if e.Name == lastEventFile && time.Since(lastEventTime) < 3*time.Second {
@@ -57,6 +57,12 @@ func Run(configFilePath string) error {
 				}
 				lastEventTime = time.Now()
 				lastEventFile = e.Name
+				if isDir(e.Name) {
+					watcher.AddWatcherRecursively()
+					mu.Unlock()
+					continue
+
+				}
 				mu.Unlock()
 
 				log.Printf("Changing %#v\n", e)
@@ -79,4 +85,12 @@ func Run(configFilePath string) error {
 			return nil
 		}
 	}
+}
+
+func isDir(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
 }
