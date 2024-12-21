@@ -12,16 +12,12 @@ import (
 	"github.com/ei-sugimoto/cudair/internal/builder"
 	"github.com/ei-sugimoto/cudair/internal/config"
 	"github.com/ei-sugimoto/cudair/internal/executor"
+	"github.com/ei-sugimoto/cudair/internal/watch"
 	"github.com/fsnotify/fsnotify"
 )
 
 func Run(configFilePath string) error {
 	log.Println("starting...")
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		return err
-	}
-	defer watcher.Close()
 
 	config, err := config.NewCudairConfig(configFilePath)
 	if err != nil {
@@ -29,9 +25,13 @@ func Run(configFilePath string) error {
 		return err
 	}
 
-	err = watcher.Add(config.Root)
+	watcher, err := watch.NewCudairWatch(config.Root, []string{"tmp"})
 	if err != nil {
-		log.Fatalln("cause Error while creating watcher:", err)
+		return err
+	}
+
+	err = watcher.AddWatcherRecursively()
+	if err != nil {
 		return err
 	}
 
@@ -44,13 +44,13 @@ func Run(configFilePath string) error {
 
 	for {
 		select {
-		case e, ok := <-watcher.Events:
+		case e, ok := <-watcher.W.Events:
 			if !ok {
 				log.Fatal("watcher event is not ok")
 			}
 			if ((e.Op&fsnotify.Write == fsnotify.Write) || (e.Op&fsnotify.Remove == fsnotify.Remove) || (e.Op&fsnotify.Create == fsnotify.Create) || (e.Op&fsnotify.Rename == fsnotify.Rename)) && (filepath.Ext(e.Name) == ".cu" || filepath.Ext(e.Name) == ".cuh") {
 				mu.Lock()
-				if e.Name == lastEventFile && time.Since(lastEventTime) < 500*time.Millisecond {
+				if e.Name == lastEventFile && time.Since(lastEventTime) < 3*time.Second {
 					mu.Unlock()
 					continue
 				}
@@ -67,7 +67,7 @@ func Run(configFilePath string) error {
 					log.Println("execution error:", err)
 				}
 			}
-		case err := <-watcher.Errors:
+		case err := <-watcher.W.Errors:
 			if err != nil {
 				log.Fatalln("cause error while running:", err)
 			}
