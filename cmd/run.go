@@ -50,6 +50,7 @@ func Run(configFilePath string) error {
 			}
 			if ((e.Op&fsnotify.Write == fsnotify.Write) || (e.Op&fsnotify.Remove == fsnotify.Remove) || (e.Op&fsnotify.Create == fsnotify.Create) || (e.Op&fsnotify.Rename == fsnotify.Rename)) && (filepath.Ext(e.Name) == ".cu" || filepath.Ext(e.Name) == ".cuh") {
 				mu.Lock()
+				//　imp event debounce.
 				if e.Name == lastEventFile && time.Since(lastEventTime) < 3*time.Second {
 					mu.Unlock()
 					continue
@@ -65,6 +66,8 @@ func Run(configFilePath string) error {
 				}
 				if err := executor.Execute(config.Build.Bin); err != nil {
 					log.Println("execution error:", err)
+					continue
+
 				}
 			}
 		case err := <-watcher.W.Errors:
