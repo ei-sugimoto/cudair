@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func Build(cmd string, tmpDirPath string) error {
@@ -16,5 +17,11 @@ func Build(cmd string, tmpDirPath string) error {
 	buildCmd.Stderr = os.Stderr
 	buildCmd.Stdout = os.Stdout
 	log.Println("building...")
-	return buildCmd.Run()
+	startTime := time.Now()
+	if err := buildCmd.Run(); err != nil {
+		return err
+	}
+	log.Printf("build time: %v\n", time.Since(startTime))
+
+	return nil
 }
