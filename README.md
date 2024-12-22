@@ -10,7 +10,7 @@ I recommend using docker.
 - [x] Live-reloading for CUDA applications
 - [x] Docker support
 - [x] Easy configuration
-- [ ] Generate log file on build errors
+- [x] Generate log file on build errors
 
 ## Go version
 
@@ -59,7 +59,7 @@ tmp_dir = "tmp"
 bin = "./tmp/main"
 # complie command
 cmd = "nvcc --std=c++17 -o ./tmp/main main.cu"
-# TODO: Generate log file on build errors
+# Generate log file on build errors
 log = "build-errors.log"
 
 # Specify the dirs you want to exclude from monitoring
