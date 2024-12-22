@@ -44,6 +44,7 @@ func Run(configFilePath string) error {
 	var mu sync.Mutex
 	var lastEventTime time.Time
 	var lastEventFile string
+	var buildAndExecMu sync.Mutex
 
 	for {
 		select {
@@ -68,16 +69,18 @@ func Run(configFilePath string) error {
 				}
 				mu.Unlock()
 
-				log.Printf("Changing %#v\n", e)
-				if err := builder.Build(config.Build.Cmd, config.TmpDir); err != nil {
-					log.Println("build error:", err)
-					continue
-				}
-				if err := executor.Execute(config.Build.Bin); err != nil {
-					log.Println("execution error:", err)
-					continue
-
-				}
+				buildAndExecMu.Lock()
+				go func() {
+					defer buildAndExecMu.Unlock()
+					log.Printf("Changing %#v\n", e)
+					if err := builder.Build(config.Build.Cmd, config.TmpDir); err != nil {
+						log.Println("build error:", err)
+						return
+					}
+					if err := executor.Execute(config.Build.Bin); err != nil {
+						log.Println("execution error:", err)
+					}
+				}()
 			}
 		case err := <-watcher.W.Errors:
 			if err != nil {
