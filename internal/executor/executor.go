@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func Execute(bin string) error {
@@ -14,10 +15,11 @@ func Execute(bin string) error {
 	log.Println("Running command:", runCmd.String())
 	runCmd.Stdout = os.Stdout
 	runCmd.Stderr = os.Stderr
+	startTime := time.Now()
 	if err := runCmd.Run(); err != nil {
 		return fmt.Errorf("command execution failed: %w", err)
 	}
+	fmt.Printf("execution time: %v\n", time.Since(startTime))
 
-	log.Println("Command finished successfully")
 	return nil
 }
