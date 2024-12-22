@@ -11,7 +11,7 @@ import (
 func Execute(bin string) error {
 	parts := strings.Fields(bin)
 	runCmd := exec.Command(parts[0], parts[1:]...)
-
+	log.Println("Running command:", runCmd.String())
 	runCmd.Stdout = os.Stdout
 	runCmd.Stderr = os.Stderr
 	if err := runCmd.Run(); err != nil {

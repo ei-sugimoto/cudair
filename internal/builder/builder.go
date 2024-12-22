@@ -8,7 +8,6 @@ import (
 )
 
 func Build(cmd string, tmpDirPath string) error {
-	log.Println("creating tmp dir")
 	if err := os.MkdirAll(tmpDirPath, os.ModePerm); err != nil {
 		return err
 	}
