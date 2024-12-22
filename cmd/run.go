@@ -73,7 +73,7 @@ func Run(configFilePath string) error {
 				go func() {
 					defer buildAndExecMu.Unlock()
 					log.Printf("Changing %#v\n", e)
-					if err := builder.Build(config.Build.Cmd, config.TmpDir); err != nil {
+					if err := builder.Build(config.Build.Cmd, config.TmpDir, config.Build.Log); err != nil {
 						log.Println("build error:", err)
 						return
 					}
