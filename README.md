@@ -3,6 +3,8 @@
 cudair enable live-reloading for developing CUDA applications like golang-air.
 I recommend using docker.
 
+![マイ ムービー](https://github.com/user-attachments/assets/bf339914-acb7-4787-93cb-e8a9d9934ee5)
+
 ## Feature
 
 - [x] Live-reloading for CUDA applications
